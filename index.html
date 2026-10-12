@@ -18,6 +18,48 @@ section{background:white;padding:25px;margin:20px 0;border-radius:16px}
 .card{background:#edf5ee;padding:20px;border-radius:12px}
 a.button{display:inline-block;background:white;color:#176b3b;padding:12px 16px;border-radius:9px;text-decoration:none;font-weight:bold}
 footer{padding:25px;text-align:center;color:#526b59}
+
+/* SAYE AI bilimsel arama motoru */
+.research-search {
+  background: white;
+  color: #183b27;
+  padding: 25px;
+  margin: 24px 0;
+  border-radius: 16px;
+  border: 1px solid #dce7dd;
+}
+.research-search input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #b8cbbd;
+  border-radius: 9px;
+  font-size: 16px;
+  margin: 10px 0;
+}
+.research-search button {
+  background: #176b3b;
+  color: white;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.research-result {
+  padding: 16px 0;
+  border-bottom: 1px solid #dce7dd;
+  overflow-wrap: anywhere;
+}
+.research-result a {
+  color: #176b3b;
+  font-weight: bold;
+}
+.research-status {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
 </style>
 </head>
 <body>
@@ -27,9 +69,142 @@ footer{padding:25px;text-align:center;color:#526b59}
 <section><h2>Kuruma genel bakış</h2><div class="cards"><div class="card"><h3>07 birim</h3><p>Ortak bir hedef için farklı araştırma alanları.</p></div><div class="card"><h3>12 haftalık plan</h3><p>Adım adım öğrenme ve geliştirme süreci.</p></div><div class="card"><h3>Ücretsiz araçlar</h3><p>Erişilebilir ve sürdürülebilir çalışma yaklaşımı.</p></div></div></section>
 <section id="hakkimizda"><h2>Hakkımızda</h2><p>SAYE AI, öğrencilerin araştırma yapmasını, yeni teknolojiler öğrenmesini ve fikirlerini küçük projelere dönüştürmesini amaçlayan bir girişimdir.</p><p><strong>Sloganımız:</strong> Öğren, araştır, geliştir!</p></section>
 <section id="birimler"><h2>Çalışma birimleri</h2><div class="cards"><div class="card"><h3>Yapay Zekâ Geliştirme</h3><p>Fikirler, deneyler ve küçük prototipler.</p></div><div class="card"><h3>Bilimsel Araştırmalar</h3><p>Güvenilir kaynakları inceleme ve raporlama.</p></div><div class="card"><h3>Etik ve Güvenlik</h3><p>Gizlilik ve sorumlu teknoloji kullanımı.</p></div><div class="card"><h3>Yazılım ve Teknoloji</h3><p>Teknik araçlar ve yazılım öğrenimi.</p></div><div class="card"><h3>Proje ve Kalite Yönetimi</h3><p>Planlama, test ve ilerleme takibi.</p></div><div class="card"><h3>Eğitim ve Öğrenme</h3><p>Rehberler ve bilgi paylaşımı.</p></div><div class="card"><h3>Görsel Tasarım</h3><p>Sunumlar, grafikler ve proje görselleri.</p></div></div></section>
-<section id="plan"><h2>İlk 12 haftalık çalışma planı</h2><p><strong>1–4. haftalar:</strong> Kuruluş düzeni, öğrenme hedefleri ve ilk proje seçimi.</p><p><strong>5–8. haftalar:</strong> Kaynakları inceleme ve küçük bir prototip geliştirme.</p><p><strong>9–12. haftalar:</strong> Test, raporlama ve sonraki adımları planlama.</p></section>
+
+<section class="research-search" id="arastirma">
+  <h2>SAYE AI Bilimsel Araştırma Motoru</h2>
+  <p>Akademik yayınları ara, yayın bilgilerini incele ve özgün kaynaklara ulaş.</p>
+
+  <form id="researchForm">
+    <label for="researchQuery">Araştırma konun</label>
+    <input
+      id="researchQuery"
+      type="search"
+      placeholder="Örn. yapay zekânın eğitimde kullanımı"
+      required
+    >
+    <button type="submit">Bilimsel yayınları ara</button>
+  </form>
+
+  <p class="research-status" id="researchStatus" aria-live="polite">
+    Arama yapmak için bir konu yaz.
+  </p>
+  <div id="researchResults"></div>
+
+  <p>
+    <small>
+      Kaynak: Crossref akademik yayın kayıtları.
+      Bir kaydın bulunması, araştırmanın kalitesinin bağımsız olarak
+      doğrulandığı anlamına gelmez.
+    </small>
+  </p>
+</section>
+
+  <section id="plan"><h2>İlk 12 haftalık çalışma planı</h2><p><strong>1–4. haftalar:</strong> Kuruluş düzeni, öğrenme hedefleri ve ilk proje seçimi.</p><p><strong>5–8. haftalar:</strong> Kaynakları inceleme ve küçük bir prototip geliştirme.</p><p><strong>9–12. haftalar:</strong> Test, raporlama ve sonraki adımları planlama.</p></section>
 <section><h2>Şeffaflık notu</h2><p>Bu site SAYE AI girişimini tanıtmak için hazırlanmıştır. Kurumun resmî statüsü veya okul onayı olduğu anlamına gelmez. Gizli bilgiler ve öğrenci kişisel verileri bu sayfaya eklenmemelidir.</p></section>
 </main>
 <footer>SAYE AI Araştırma Enstitüsü · Öğren, araştır, geliştir!</footer>
+
+<script>
+const researchForm = document.getElementById("researchForm");
+
+researchForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  const query = document.getElementById("researchQuery").value.trim();
+  const status = document.getElementById("researchStatus");
+  const results = document.getElementById("researchResults");
+
+  if (!query) return;
+
+  status.textContent = "Akademik yayınlar aranıyor...";
+  results.replaceChildren();
+
+  try {
+    const apiUrl =
+      "https://api.crossref.org/works?query.bibliographic=" +
+      encodeURIComponent(query) +
+      "&filter=type:journal-article&rows=8&select=DOI,title,author,published-print,published-online,container-title,URL,type";
+
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error("Arama servisi yanıt vermedi.");
+    }
+
+    const data = await response.json();
+    const papers = data.message.items || [];
+
+    if (!papers.length) {
+      status.textContent = "Bu konuda yayın bulunamadı. Başka kelimeler dene.";
+      return;
+    }
+
+    let count = 0;
+
+    for (const paper of papers) {
+      const title = paper.title?.[0] || "Başlık bilgisi yok";
+      const authors = (paper.author || [])
+        .slice(0, 5)
+        .map(author =>
+          [author.given, author.family].filter(Boolean).join(" ")
+        )
+        .filter(Boolean)
+        .join(", ");
+
+      const dateParts =
+        paper["published-print"]?.["date-parts"]?.[0] ||
+        paper["published-online"]?.["date-parts"]?.[0];
+
+      const year = dateParts?.[0] || "Yıl belirtilmemiş";
+      const doi = paper.DOI;
+      const journal = paper["container-title"]?.[0] || "Dergi belirtilmemiş";
+
+      const article = document.createElement("article");
+      article.className = "research-result";
+
+      const heading = document.createElement("h3");
+      heading.textContent = title;
+      article.appendChild(heading);
+
+      const details = document.createElement("p");
+      details.textContent =
+        "Yazarlar: " + (authors || "Belirtilmemiş") +
+        " | Yıl: " + year +
+        " | Dergi: " + journal;
+      article.appendChild(details);
+
+      if (doi) {
+        const link = document.createElement("a");
+        link.href = "https://doi.org/" + encodeURIComponent(doi);
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "DOI: " + doi + " — Kaynağı aç";
+        article.appendChild(link);
+      } else if (paper.URL) {
+        const link = document.createElement("a");
+        link.href = paper.URL;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "Yayın sayfasını aç";
+        article.appendChild(link);
+      } else {
+        const note = document.createElement("p");
+        note.textContent = "Doğrudan yayın bağlantısı bulunamadı.";
+        article.appendChild(note);
+      }
+
+      results.appendChild(article);
+      count++;
+    }
+
+    status.textContent =
+      count + " yayın kaydı bulundu. Yayın bilgilerini ve özgün makaleleri kontrol et.";
+  } catch (error) {
+    status.textContent =
+      "Arama yapılamadı. İnternet bağlantısını veya arama servisinin durumunu kontrol edip tekrar dene.";
+  }
+});
+</script>
+
 </body>
 </html>
