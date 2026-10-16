@@ -23,18 +23,25 @@ footer{padding:25px;text-align:center;color:#526b59}
 .research-search input{box-sizing:border-box;width:100%;padding:13px;border:1px solid #b8cbbd;border-radius:9px;font-size:16px;margin:10px 0}
 .research-search button,.bb-zeka button{background:#176b3b;color:white;padding:12px 18px;border:0;border-radius:9px;cursor:pointer;font-weight:bold}
 .research-result{padding:16px 0;border-bottom:1px solid #dce7dd;overflow-wrap:anywhere}
-.research-result a,.zeka-kaynak a{color:#176b3b;font-weight:bold}
+.research-result a,.zeka-kaynak a,.zeka-mesaj a{color:#176b3b;font-weight:bold;overflow-wrap:anywhere}
 .research-status{line-height:1.6;overflow-wrap:anywhere}
 .bb-zeka{background:white;color:#183b27;padding:28px;margin:24px 0;border-radius:18px;border:1px solid #dce7dd}
 .bb-zeka .zeka-etiket{color:#176b3b;font-weight:bold;letter-spacing:1px;font-size:13px}
 .bb-zeka textarea{box-sizing:border-box;width:100%;min-height:125px;padding:14px;margin:12px 0;border:1px solid #b8cbbd;border-radius:10px;font:inherit;resize:vertical}
 .bb-zeka button:disabled{opacity:.6;cursor:wait}
-.zeka-yanit{margin-top:22px;padding:18px;background:#f3f7f3;border-radius:12px;line-height:1.8;overflow-wrap:anywhere;white-space:pre-wrap}
-.zeka-kaynak a{overflow-wrap:anywhere}
-.zeka-mesaj{padding:12px 15px;margin:12px 0;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}
+.zeka-yanit{margin-top:22px;padding:18px;background:#f3f7f3;border-radius:12px;line-height:1.8;overflow-wrap:anywhere}
+.zeka-kaynak{margin-top:14px}
+.zeka-kaynak h3{font-size:17px}
+.zeka-kaynak ul{padding-left:22px}
+.zeka-kaynak li{margin:10px 0;line-height:1.6}
+.zeka-mesaj{padding:12px 15px;margin:12px 0;border-radius:12px;overflow-wrap:anywhere;line-height:1.7}
 .zeka-kullanici{background:#e4f0e6;margin-left:8%}
 .zeka-asistan{background:#f3f7f3;margin-right:4%}
-.zeka-mesaj strong{display:block;margin-bottom:5px}
+.zeka-mesaj strong{display:block;margin-bottom:8px}
+.zeka-mesaj p{margin:8px 0}
+.zeka-mesaj ul,.zeka-mesaj ol{padding-left:24px}
+.zeka-mesaj li{margin:5px 0}
+.zeka-mesaj pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#e7eee8;padding:12px;border-radius:8px}
 .zeka-gecmis-kontrol{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .bb-zeka .zeka-gecmis-kontrol button{background:#e4eee5;color:#183b27}
 @media(max-width:600px){.bb-zeka{padding:18px}header nav a{display:inline-block}}
@@ -237,12 +244,146 @@ const zekaSoru = document.getElementById("zekaSoru");
 const zekaGonder = document.getElementById("zekaGonder");
 const zekaTemizle = document.getElementById("zekaTemizle");
 
-/*
-  Mesajlar yalnızca bu sayfa açıkken bellekte tutulur.
-  Sayfa yenilenince veya kapatılınca bu geçici geçmiş silinir.
-*/
 let zekaGecmisi = [];
 let istekSuruyor = false;
+
+/*
+ * Güvenli, sınırlı Markdown gösterimi.
+ * HTML doğrudan çalıştırılmaz; içerik DOM düğümleriyle oluşturulur.
+ */
+function zekaSatiriniIsle(parent, line) {
+  const baslik = line.match(/^(#{1,3})\s+(.+)$/);
+
+  if (baslik) {
+    const h = document.createElement("h" + baslik[1].length);
+    zekaSatirIci(h, baslik[2]);
+    parent.appendChild(h);
+    return;
+  }
+
+  const madde = line.match(/^\s*[-*]\s+(.+)$/);
+  if (madde) {
+    let liste = parent.lastElementChild;
+    if (!liste || liste.tagName !== "UL") {
+      liste = document.createElement("ul");
+      parent.appendChild(liste);
+    }
+    const li = document.createElement("li");
+    zekaSatirIci(li, madde[1]);
+    liste.appendChild(li);
+    return;
+  }
+
+  const numarali = line.match(/^\s*\d+[.)]\s+(.+)$/);
+  if (numarali) {
+    let liste = parent.lastElementChild;
+    if (!liste || liste.tagName !== "OL") {
+      liste = document.createElement("ol");
+      parent.appendChild(liste);
+    }
+    const li = document.createElement("li");
+    zekaSatirIci(li, numarali[1]);
+    liste.appendChild(li);
+    return;
+  }
+
+  if (!line.trim()) return;
+
+  const p = document.createElement("p");
+  zekaSatirIci(p, line);
+  parent.appendChild(p);
+}
+
+function zekaSatirIci(parent, text) {
+  /*
+   * Bazı modeller bağlantıları hatalı Markdown biçiminde döndürebilir.
+   * Yaygın biçim hatalarını düzeltmeye çalış.
+   */
+  text = text
+    .replace(/\\\(/g, "(")
+    .replace(/\\\)/g, ")")
+    .replace(
+      /\]\(\[(https?:\/\/[^\]]+)\]\((https?:\/\/[^)]+)\)\)/g,
+      "]($2)"
+    );
+
+  const pattern =
+    /(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)|(https?:\/\/[^\s<>"')\]]+))/g;
+
+  let cursor = 0;
+  let match;
+
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > cursor) {
+      parent.appendChild(
+        document.createTextNode(text.slice(cursor, match.index))
+      );
+    }
+
+    const token = match[0];
+
+    if (token.startsWith("**") && token.endsWith("**")) {
+      const strong = document.createElement("strong");
+      strong.textContent = token.slice(2, -2);
+      parent.appendChild(strong);
+    } else if (token.startsWith("*") && token.endsWith("*")) {
+      const em = document.createElement("em");
+      em.textContent = token.slice(1, -1);
+      parent.appendChild(em);
+    } else if (token.startsWith("`") && token.endsWith("`")) {
+      const code = document.createElement("code");
+      code.textContent = token.slice(1, -1);
+      parent.appendChild(code);
+    } else {
+      let label;
+      let href;
+
+      if (match[2] && match[3]) {
+        label = match[2];
+        href = match[3];
+      } else {
+        label = token;
+        href = token.replace(/[.,;!?]+$/, "");
+      }
+
+      try {
+        const url = new URL(href);
+        if (url.protocol === "https:" || url.protocol === "http:") {
+          const link = document.createElement("a");
+          link.href = url.href;
+          link.textContent = label;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          parent.appendChild(link);
+
+          const kalan = token.slice(href.length);
+          if (!match[2] && kalan) {
+            parent.appendChild(document.createTextNode(kalan));
+          }
+        } else {
+          parent.appendChild(document.createTextNode(token));
+        }
+      } catch {
+        parent.appendChild(document.createTextNode(token));
+      }
+    }
+
+    cursor = pattern.lastIndex;
+  }
+
+  if (cursor < text.length) {
+    parent.appendChild(document.createTextNode(text.slice(cursor)));
+  }
+}
+
+function zekaMarkdownGoster(container, text) {
+  container.replaceChildren();
+
+  const lines = String(text || "").split(/\r?\n/);
+  for (const line of lines) {
+    zekaSatiriniIsle(container, line);
+  }
+}
 
 function zekaMesajiGoster(rol, metin) {
   const kutu = document.createElement("div");
@@ -253,13 +394,64 @@ function zekaMesajiGoster(rol, metin) {
   etiket.textContent = rol === "user" ? "Sen" : "BB Zekâ";
 
   const icerik = document.createElement("div");
-  icerik.textContent = metin;
+
+  if (rol === "assistant") {
+    zekaMarkdownGoster(icerik, metin);
+  } else {
+    const p = document.createElement("p");
+    p.textContent = metin;
+    icerik.appendChild(p);
+  }
 
   kutu.appendChild(etiket);
   kutu.appendChild(icerik);
   zekaSohbet.appendChild(kutu);
 
   return kutu;
+}
+
+function zekaKaynaklariGoster(sources) {
+  zekaKaynaklar.replaceChildren();
+
+  if (!Array.isArray(sources) || sources.length === 0) return;
+
+  const baslik = document.createElement("h3");
+  baslik.textContent = "Kaynak bağlantıları";
+  zekaKaynaklar.appendChild(baslik);
+
+  const liste = document.createElement("ul");
+  const gorulenler = new Set();
+
+  for (const source of sources) {
+    try {
+      if (!source || !source.url) continue;
+
+      const url = new URL(source.url);
+      if (url.protocol !== "https:" && url.protocol !== "http:") continue;
+
+      if (gorulenler.has(url.href)) continue;
+      gorulenler.add(url.href);
+
+      const li = document.createElement("li");
+      const link = document.createElement("a");
+
+      link.href = url.href;
+      link.textContent = source.title || url.hostname;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+
+      li.appendChild(link);
+      liste.appendChild(li);
+    } catch {
+      // Geçersiz kaynak bağlantıları gösterilmez.
+    }
+  }
+
+  if (liste.children.length > 0) {
+    zekaKaynaklar.appendChild(liste);
+  } else {
+    zekaKaynaklar.replaceChildren();
+  }
 }
 
 zekaForm.addEventListener("submit", async function(event) {
@@ -279,11 +471,9 @@ zekaForm.addEventListener("submit", async function(event) {
   const bosMesaj = document.getElementById("zekaBosMesaj");
   if (bosMesaj) bosMesaj.remove();
 
-  // Yeni kullanıcı mesajını konuşma geçmişine ekle.
   zekaMesajiGoster("user", soru);
   zekaGecmisi.push({ role: "user", content: soru });
 
-  // Worker'a en fazla son 12 önceki mesaj ve yeni soru gönderilir.
   const gonderilecekMesajlar = zekaGecmisi.slice(-13).map(function(mesaj) {
     return { role: mesaj.role, content: mesaj.content };
   });
@@ -314,38 +504,28 @@ zekaForm.addEventListener("submit", async function(event) {
       throw new Error(data.error || "Asistan şu anda yanıt veremiyor.");
     }
 
-    const cevap = data.answer || "Metin yanıtı alınamadı.";
+    let cevap = data.answer || "Metin yanıtı alınamadı.";
 
-    // Başarılı yanıtı geçmişe ekle.
+    /*
+     * Kaynaklar ayrı bir dizi olarak geldiyse, yanıt içindeki
+     * "Web kaynakları" bölümünü kaldırıp bağlantıları altta göster.
+     * Kaynak dizisi yoksa yanıttaki kaynak metnini koru.
+     */
+    const kaynakListesi = Array.isArray(data.webSources)
+      ? data.webSources
+      : (Array.isArray(data.sources) ? data.sources : []);
+
+    if (kaynakListesi.length > 0) {
+      cevap = cevap.replace(
+        /\n{0,2}#{1,3}\s*Web kaynakları\s*\n[\s\S]*$/i,
+        ""
+      ).trim();
+    }
+
     zekaGecmisi.push({ role: "assistant", content: cevap });
     zekaMesajiGoster("assistant", cevap);
 
-    if (Array.isArray(data.sources) && data.sources.length > 0) {
-      const baslik = document.createElement("h3");
-      baslik.textContent = "Kaynak bağlantıları";
-      zekaKaynaklar.appendChild(baslik);
-
-      for (const source of data.sources) {
-        try {
-          if (!source.url) continue;
-
-          const url = new URL(source.url);
-          if (url.protocol !== "https:" && url.protocol !== "http:") continue;
-
-          const satir = document.createElement("p");
-          const link = document.createElement("a");
-          link.href = url.href;
-          link.textContent = source.title || "Kaynağı aç";
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-
-          satir.appendChild(link);
-          zekaKaynaklar.appendChild(satir);
-        } catch {
-          // Geçersiz kaynak bağlantıları gösterilmez.
-        }
-      }
-    }
+    zekaKaynaklariGoster(kaynakListesi);
 
     zekaDurum.textContent = data.sourceNote ||
       "Yanıt hazır. Bilgileri ve varsa kaynakları kontrol edin.";
@@ -353,7 +533,7 @@ zekaForm.addEventListener("submit", async function(event) {
   } catch (error) {
     console.error("BB Zekâ bağlantı hatası:", error);
 
-    // Başarısız istekte eklenen kullanıcı mesajını geçmişten çıkar.
+    // Son kullanıcı mesajını geçmişten çıkar.
     zekaGecmisi.pop();
 
     zekaDurum.textContent = error.message ||
