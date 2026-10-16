@@ -31,6 +31,12 @@ footer{padding:25px;text-align:center;color:#526b59}
 .bb-zeka button:disabled{opacity:.6;cursor:wait}
 .zeka-yanit{margin-top:22px;padding:18px;background:#f3f7f3;border-radius:12px;line-height:1.8;overflow-wrap:anywhere;white-space:pre-wrap}
 .zeka-kaynak a{overflow-wrap:anywhere}
+.zeka-mesaj{padding:12px 15px;margin:12px 0;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}
+.zeka-kullanici{background:#e4f0e6;margin-left:8%}
+.zeka-asistan{background:#f3f7f3;margin-right:4%}
+.zeka-mesaj strong{display:block;margin-bottom:5px}
+.zeka-gecmis-kontrol{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.bb-zeka .zeka-gecmis-kontrol button{background:#e4eee5;color:#183b27}
 @media(max-width:600px){.bb-zeka{padding:18px}header nav a{display:inline-block}}
 </style>
 </head>
@@ -84,17 +90,26 @@ footer{padding:25px;text-align:center;color:#526b59}
 
 <section class="bb-zeka" id="bb-zeka">
 <p class="zeka-etiket">BB AKADEMİ · YAPAY ZEKÂ BİRİMİ</p>
-<h2>BB Zekâ — Bilimsel Araştırma Asistanı</h2>
-<p>Araştırma sorunuzu yazın. BB Zekâ bilimsel ve anlaşılır bir yanıt hazırlamaya çalışsın.</p>
+<h2>BB Zekâ — Genel Amaçlı Yapay Zekâ Asistanı</h2>
+<p>Soru sorabilir, metin yazdırabilir, fikir geliştirebilir ve bilimsel konuları araştırabilirsin. Önceki mesajların bu sayfa açıkken konuşmaya dâhil edilir.</p>
+
+<div id="zekaSohbet" aria-live="polite">
+<p id="zekaBosMesaj">Merhaba! Ben BB Zekâ. Sana nasıl yardımcı olabilirim?</p>
+</div>
+
 <form id="zekaForm">
-<label for="zekaSoru"><strong>Araştırma sorunuz</strong></label>
-<textarea id="zekaSoru" maxlength="1500" placeholder="Örn. Yapay zekânın eğitimde kullanımının avantajları ve riskleri nelerdir?" required></textarea>
+<label for="zekaSoru"><strong>Mesajın</strong></label>
+<textarea id="zekaSoru" maxlength="1500" placeholder="Bir soru sor, hikâye yazdır veya bir fikri birlikte geliştir..." required></textarea>
 <button id="zekaGonder" type="submit">BB Zekâ'ya sor</button>
 </form>
-<p id="zekaDurum" role="status" aria-live="polite">Hazırsanız araştırma sorunuzu yazabilirsiniz.</p>
-<div id="zekaYanit" class="zeka-yanit" hidden></div>
+
+<div class="zeka-gecmis-kontrol">
+<button id="zekaTemizle" type="button">Bu sohbeti temizle</button>
+</div>
+
+<p id="zekaDurum" role="status" aria-live="polite">Hazırsan mesajını yazabilirsin.</p>
 <div id="zekaKaynaklar" class="zeka-kaynak"></div>
-<p><small>Önemli: Yapay zekâ yanıtları hata içerebilir. Bilimsel iddiaları ve kaynakları ayrıca kontrol edin.</small></p>
+<p><small>Önemli: Yapay zekâ yanıtları hata içerebilir. Bilimsel iddiaları ve kaynakları ayrıca kontrol et. Gizli bilgilerini veya kişisel verilerini paylaşma.</small></p>
 </section>
 
 <section class="research-search" id="arastirma">
@@ -213,80 +228,167 @@ researchForm.addEventListener("submit", async function(event) {
   }
 });
 
-/* BB Zekâ bağlantısı */
+/* BB Zekâ: sohbet geçmişi ve Worker bağlantısı */
 const zekaForm = document.getElementById("zekaForm");
+const zekaSohbet = document.getElementById("zekaSohbet");
+const zekaDurum = document.getElementById("zekaDurum");
+const zekaKaynaklar = document.getElementById("zekaKaynaklar");
+const zekaSoru = document.getElementById("zekaSoru");
+const zekaGonder = document.getElementById("zekaGonder");
+const zekaTemizle = document.getElementById("zekaTemizle");
+
+/*
+  Mesajlar yalnızca bu sayfa açıkken bellekte tutulur.
+  Sayfa yenilenince veya kapatılınca bu geçici geçmiş silinir.
+*/
+let zekaGecmisi = [];
+let istekSuruyor = false;
+
+function zekaMesajiGoster(rol, metin) {
+  const kutu = document.createElement("div");
+  kutu.className = "zeka-mesaj " +
+    (rol === "user" ? "zeka-kullanici" : "zeka-asistan");
+
+  const etiket = document.createElement("strong");
+  etiket.textContent = rol === "user" ? "Sen" : "BB Zekâ";
+
+  const icerik = document.createElement("div");
+  icerik.textContent = metin;
+
+  kutu.appendChild(etiket);
+  kutu.appendChild(icerik);
+  zekaSohbet.appendChild(kutu);
+
+  return kutu;
+}
 
 zekaForm.addEventListener("submit", async function(event) {
   event.preventDefault();
 
-  const soru = document.getElementById("zekaSoru").value.trim();
-  const durum = document.getElementById("zekaDurum");
-  const yanit = document.getElementById("zekaYanit");
-  const kaynaklar = document.getElementById("zekaKaynaklar");
-  const buton = document.getElementById("zekaGonder");
+  if (istekSuruyor) return;
 
+  const soru = zekaSoru.value.trim();
   if (!soru) return;
 
-  durum.textContent = "BB Zekâ yanıt hazırlıyor...";
-  yanit.hidden = true;
-  yanit.textContent = "";
-  kaynaklar.replaceChildren();
-  buton.disabled = true;
-  buton.textContent = "Yanıt hazırlanıyor...";
+  istekSuruyor = true;
+  zekaGonder.disabled = true;
+  zekaGonder.textContent = "Yanıt hazırlanıyor...";
+  zekaDurum.textContent = "BB Zekâ yanıt hazırlıyor...";
+  zekaKaynaklar.replaceChildren();
+
+  const bosMesaj = document.getElementById("zekaBosMesaj");
+  if (bosMesaj) bosMesaj.remove();
+
+  // Yeni kullanıcı mesajını konuşma geçmişine ekle.
+  zekaMesajiGoster("user", soru);
+  zekaGecmisi.push({ role: "user", content: soru });
+
+  // Worker'a en fazla son 12 önceki mesaj ve yeni soru gönderilir.
+  const gonderilecekMesajlar = zekaGecmisi.slice(-13).map(function(mesaj) {
+    return { role: mesaj.role, content: mesaj.content };
+  });
+
+  zekaSoru.value = "";
 
   try {
     const response = await fetch(
       "https://wispy-shape-04a2.cevirmeyase.workers.dev/ask",
       {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({topic: soru})
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topic: soru,
+          messages: gonderilecekMesajlar
+        })
       }
     );
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error("Sunucudan okunabilir bir yanıt alınamadı.");
+    }
 
     if (!response.ok) {
       throw new Error(data.error || "Asistan şu anda yanıt veremiyor.");
     }
 
-    yanit.textContent = data.answer || "Metin yanıtı alınamadı.";
-    yanit.hidden = false;
+    const cevap = data.answer || "Metin yanıtı alınamadı.";
+
+    // Başarılı yanıtı geçmişe ekle.
+    zekaGecmisi.push({ role: "assistant", content: cevap });
+    zekaMesajiGoster("assistant", cevap);
 
     if (Array.isArray(data.sources) && data.sources.length > 0) {
       const baslik = document.createElement("h3");
       baslik.textContent = "Kaynak bağlantıları";
-      kaynaklar.appendChild(baslik);
+      zekaKaynaklar.appendChild(baslik);
 
       for (const source of data.sources) {
         try {
+          if (!source.url) continue;
+
           const url = new URL(source.url);
           if (url.protocol !== "https:" && url.protocol !== "http:") continue;
 
           const satir = document.createElement("p");
           const link = document.createElement("a");
           link.href = url.href;
+          link.textContent = source.title || "Kaynağı aç";
           link.target = "_blank";
           link.rel = "noopener noreferrer";
-          link.textContent = source.title || "Kaynağı aç";
+
           satir.appendChild(link);
-          kaynaklar.appendChild(satir);
+          zekaKaynaklar.appendChild(satir);
         } catch {
-          // Geçersiz bağlantılar gösterilmez.
+          // Geçersiz kaynak bağlantıları gösterilmez.
         }
       }
     }
 
-    durum.textContent = data.sourceNote ||
+    zekaDurum.textContent = data.sourceNote ||
       "Yanıt hazır. Bilgileri ve varsa kaynakları kontrol edin.";
+
   } catch (error) {
     console.error("BB Zekâ bağlantı hatası:", error);
-    durum.textContent = error.message ||
+
+    // Başarısız istekte eklenen kullanıcı mesajını geçmişten çıkar.
+    zekaGecmisi.pop();
+
+    zekaDurum.textContent = error.message ||
       "BB Zekâ bağlantı kuramadı. Biraz sonra tekrar deneyin.";
+
+    zekaMesajiGoster(
+      "assistant",
+      "Üzgünüm, bu mesaj gönderilemedi. Lütfen yeniden deneyin."
+    );
   } finally {
-    buton.disabled = false;
-    buton.textContent = "BB Zekâ'ya sor";
+    istekSuruyor = false;
+    zekaGonder.disabled = false;
+    zekaGonder.textContent = "BB Zekâ'ya sor";
+    zekaSoru.focus();
   }
+});
+
+/* Mevcut geçici sohbeti temizle */
+zekaTemizle.addEventListener("click", function() {
+  if (istekSuruyor) {
+    zekaDurum.textContent = "Yanıt hazırlanırken sohbet temizlenemez.";
+    return;
+  }
+
+  zekaGecmisi = [];
+  zekaSohbet.replaceChildren();
+
+  const mesaj = document.createElement("p");
+  mesaj.id = "zekaBosMesaj";
+  mesaj.textContent = "Merhaba! Ben BB Zekâ. Sana nasıl yardımcı olabilirim?";
+  zekaSohbet.appendChild(mesaj);
+
+  zekaKaynaklar.replaceChildren();
+  zekaDurum.textContent = "Sohbet temizlendi. Yeni bir soruyla başlayabilirsin.";
+  zekaSoru.value = "";
 });
 </script>
 </body>
