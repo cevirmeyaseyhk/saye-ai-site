@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BB Akademi Bilim Ve Araştırma Kulübü 2026/2027</title>
+
 <style>
 body{margin:0;font-family:Arial,sans-serif;background:#f3f7f3;color:#183b27}
 header{background:#176b3b;color:white;padding:22px 7%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
@@ -43,9 +44,13 @@ footer{padding:25px;text-align:center;color:#526b59}
 .zeka-mesaj pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#e7eee8;padding:12px;border-radius:8px}
 .zeka-gecmis-kontrol{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .bb-zeka .zeka-gecmis-kontrol button{background:#e4eee5;color:#183b27}
-@media(max-width:600px){.bb-zeka{padding:18px}header nav a{display:inline-block}}
+@media(max-width:600px){
+  .bb-zeka{padding:18px}
+  header nav a{display:inline-block}
+}
 </style>
 </head>
+
 <body>
 
 <header>
@@ -60,6 +65,7 @@ footer{padding:25px;text-align:center;color:#526b59}
 </header>
 
 <main>
+
 <div class="hero">
 <p>ÖĞRENCİ ARAŞTIRMA GİRİŞİMİ</p>
 <h1>Merakla başlar.<br>Bilgiyle gelişir.</h1>
@@ -70,9 +76,18 @@ footer{padding:25px;text-align:center;color:#526b59}
 <section>
 <h2>Kuruma genel bakış</h2>
 <div class="cards">
-<div class="card"><h3>07 birim</h3><p>Ortak bir hedef için farklı araştırma alanları.</p></div>
-<div class="card"><h3>12 haftalık plan</h3><p>Adım adım öğrenme ve geliştirme süreci.</p></div>
-<div class="card"><h3>Ücretsiz araçlar</h3><p>Erişilebilir ve sürdürülebilir çalışma yaklaşımı.</p></div>
+<div class="card">
+<h3>07 birim</h3>
+<p>Ortak bir hedef için farklı araştırma alanları.</p>
+</div>
+<div class="card">
+<h3>12 haftalık plan</h3>
+<p>Adım adım öğrenme ve geliştirme süreci.</p>
+</div>
+<div class="card">
+<h3>Ücretsiz araçlar</h3>
+<p>Erişilebilir ve sürdürülebilir çalışma yaklaşımı.</p>
+</div>
 </div>
 </section>
 
@@ -85,13 +100,34 @@ footer{padding:25px;text-align:center;color:#526b59}
 <section id="birimler">
 <h2>Çalışma birimleri</h2>
 <div class="cards">
-<div class="card"><h3>Yapay Zekâ Geliştirme</h3><p>Fikirler, deneyler ve küçük prototipler.</p></div>
-<div class="card"><h3>Bilimsel Araştırmalar</h3><p>Güvenilir kaynakları inceleme ve raporlama.</p></div>
-<div class="card"><h3>Etik ve Güvenlik</h3><p>Gizlilik ve sorumlu teknoloji kullanımı.</p></div>
-<div class="card"><h3>Yazılım ve Teknoloji</h3><p>Teknik araçlar ve yazılım öğrenimi.</p></div>
-<div class="card"><h3>Proje ve Kalite Yönetimi</h3><p>Planlama, test ve ilerleme takibi.</p></div>
-<div class="card"><h3>Eğitim ve Öğrenme</h3><p>Rehberler ve bilgi paylaşımı.</p></div>
-<div class="card"><h3>Görsel Tasarım</h3><p>Sunumlar, grafikler ve proje görselleri.</p></div>
+<div class="card">
+<h3>Yapay Zekâ Geliştirme</h3>
+<p>Fikirler, deneyler ve küçük prototipler.</p>
+</div>
+<div class="card">
+<h3>Bilimsel Araştırmalar</h3>
+<p>Güvenilir kaynakları inceleme ve raporlama.</p>
+</div>
+<div class="card">
+<h3>Etik ve Güvenlik</h3>
+<p>Gizlilik ve sorumlu teknoloji kullanımı.</p>
+</div>
+<div class="card">
+<h3>Yazılım ve Teknoloji</h3>
+<p>Teknik araçlar ve yazılım öğrenimi.</p>
+</div>
+<div class="card">
+<h3>Proje ve Kalite Yönetimi</h3>
+<p>Planlama, test ve ilerleme takibi.</p>
+</div>
+<div class="card">
+<h3>Eğitim ve Öğrenme</h3>
+<p>Rehberler ve bilgi paylaşımı.</p>
+</div>
+<div class="card">
+<h3>Görsel Tasarım</h3>
+<p>Sunumlar, grafikler ve proje görselleri.</p>
+</div>
 </div>
 </section>
 
@@ -116,17 +152,20 @@ footer{padding:25px;text-align:center;color:#526b59}
 
 <p id="zekaDurum" role="status" aria-live="polite">Hazırsan mesajını yazabilirsin.</p>
 <div id="zekaKaynaklar" class="zeka-kaynak"></div>
+
 <p><small>Önemli: Yapay zekâ yanıtları hata içerebilir. Bilimsel iddiaları ve kaynakları ayrıca kontrol et. Gizli bilgilerini veya kişisel verilerini paylaşma.</small></p>
 </section>
 
 <section class="research-search" id="arastirma">
 <h2>BB Akademi Bilimsel Araştırma Motoru</h2>
 <p>Akademik yayınları ara, yayın bilgilerini incele ve özgün kaynaklara ulaş.</p>
+
 <form id="researchForm">
 <label for="researchQuery">Araştırma konun</label>
 <input id="researchQuery" type="search" placeholder="Örn. yapay zekânın eğitimde kullanımı" required>
 <button type="submit">Bilimsel yayınları ara</button>
 </form>
+
 <p class="research-status" id="researchStatus" aria-live="polite">Arama yapmak için bir konu yaz.</p>
 <div id="researchResults"></div>
 <p><small>Kaynak: Crossref akademik yayın kayıtları. Bir kaydın bulunması, araştırmanın kalitesinin bağımsız olarak doğrulandığı anlamına gelmez.</small></p>
@@ -143,12 +182,18 @@ footer{padding:25px;text-align:center;color:#526b59}
 <h2>Şeffaflık notu</h2>
 <p>Bu site BB Akademi Bilim Ve Araştırma Kulübü 2026/2027 girişimini tanıtmak için hazırlanmıştır. Kurumun resmî statüsü veya okul onayı olduğu anlamına gelmez. Gizli bilgiler ve öğrenci kişisel verileri bu sayfaya eklenmemelidir.</p>
 </section>
+
 </main>
 
 <footer>BB Akademi Bilim Ve Araştırma Kulübü 2026/2027 · Öğren, araştır, geliştir!</footer>
 
 <script>
-/* Crossref bilimsel yayın araması */
+"use strict";
+
+/* =========================================
+   1. CROSSREF BİLİMSEL YAYIN ARAMASI
+========================================= */
+
 const researchForm = document.getElementById("researchForm");
 
 researchForm.addEventListener("submit", async function(event) {
@@ -170,6 +215,7 @@ researchForm.addEventListener("submit", async function(event) {
       "&filter=type:journal-article&rows=8&select=DOI,title,author,published-print,published-online,container-title,URL,type";
 
     const response = await fetch(apiUrl);
+
     if (!response.ok) {
       throw new Error("Arama servisi yanıt vermedi.");
     }
@@ -178,7 +224,8 @@ researchForm.addEventListener("submit", async function(event) {
     const papers = data.message.items || [];
 
     if (!papers.length) {
-      status.textContent = "Bu konuda yayın bulunamadı. Başka kelimeler deneyin.";
+      status.textContent =
+        "Bu konuda yayın bulunamadı. Başka kelimeler deneyin.";
       return;
     }
 
@@ -220,8 +267,9 @@ researchForm.addEventListener("submit", async function(event) {
       article.appendChild(details);
 
       const link = document.createElement("a");
+
       const targetUrl = doi
-        ? "https://doi.org/" + encodeURIComponent(doi)
+        ? "https://doi.org/" + doi
         : paper.URL;
 
       if (targetUrl) {
@@ -229,6 +277,7 @@ researchForm.addEventListener("submit", async function(event) {
         link.textContent = doi
           ? "DOI: " + doi + " — Kaynağı aç"
           : "Yayın sayfasını aç";
+
         link.target = "_blank";
         link.rel = "noopener noreferrer";
         article.appendChild(link);
@@ -243,14 +292,22 @@ researchForm.addEventListener("submit", async function(event) {
     }
 
     status.textContent =
-      count + " yayın kaydı bulundu. Yayın bilgilerini ve özgün makaleleri kontrol edin.";
+      count +
+      " yayın kaydı bulundu. Yayın bilgilerini ve özgün makaleleri kontrol edin.";
+
   } catch (error) {
+    console.error("Bilimsel arama hatası:", error);
+
     status.textContent =
       "Arama yapılamadı. İnternet bağlantısını veya arama servisinin durumunu kontrol edip tekrar deneyin.";
   }
 });
 
-/* BB Zekâ: sohbet geçmişi ve Worker bağlantısı */
+
+/* =========================================
+   2. BB ZEKÂ SOHBETİ
+========================================= */
+
 const zekaForm = document.getElementById("zekaForm");
 const zekaSohbet = document.getElementById("zekaSohbet");
 const zekaDurum = document.getElementById("zekaDurum");
@@ -259,10 +316,15 @@ const zekaSoru = document.getElementById("zekaSoru");
 const zekaGonder = document.getElementById("zekaGonder");
 const zekaTemizle = document.getElementById("zekaTemizle");
 
+const BB_ZEKA_ENDPOINT =
+  "https://wispy-shape-04a2.cevirmeyase.workers.dev/ask";
+
 let zekaGecmisi = [];
 let istekSuruyor = false;
 
+
 /* Güvenli, sınırlı Markdown gösterimi. */
+
 function zekaSatiriniIsle(parent, line) {
   const baslik = line.match(/^(#{1,3})\s+(.+)$/);
 
@@ -311,6 +373,7 @@ function zekaSatiriniIsle(parent, line) {
   zekaSatirIci(p, line);
   parent.appendChild(p);
 }
+
 
 function zekaSatirIci(parent, text) {
   text = text
@@ -395,6 +458,7 @@ function zekaSatirIci(parent, text) {
   }
 }
 
+
 function zekaMarkdownGoster(container, text) {
   container.replaceChildren();
 
@@ -405,10 +469,12 @@ function zekaMarkdownGoster(container, text) {
   }
 }
 
+
 function zekaMesajiGoster(rol, metin) {
   const kutu = document.createElement("div");
 
-  kutu.className = "zeka-mesaj " +
+  kutu.className =
+    "zeka-mesaj " +
     (rol === "user" ? "zeka-kullanici" : "zeka-asistan");
 
   const etiket = document.createElement("strong");
@@ -430,6 +496,7 @@ function zekaMesajiGoster(rol, metin) {
 
   return kutu;
 }
+
 
 function zekaKaynaklariGoster(sources) {
   zekaKaynaklar.replaceChildren();
@@ -466,6 +533,7 @@ function zekaKaynaklariGoster(sources) {
 
       li.appendChild(link);
       liste.appendChild(li);
+
     } catch {
       // Geçersiz kaynak bağlantıları gösterilmez.
     }
@@ -478,13 +546,18 @@ function zekaKaynaklariGoster(sources) {
   }
 }
 
-/* BB Zekâ'ya mesaj gönderme */
+
+/* =========================================
+   3. DÜZELTİLMİŞ BB ZEKÂ İSTEK SİSTEMİ
+========================================= */
+
 zekaForm.addEventListener("submit", async function(event) {
   event.preventDefault();
 
   if (istekSuruyor) return;
 
   const soru = zekaSoru.value.trim();
+
   if (!soru) return;
 
   istekSuruyor = true;
@@ -494,11 +567,25 @@ zekaForm.addEventListener("submit", async function(event) {
   zekaKaynaklar.replaceChildren();
 
   const bosMesaj = document.getElementById("zekaBosMesaj");
-  if (bosMesaj) bosMesaj.remove();
+
+  if (bosMesaj) {
+    bosMesaj.remove();
+  }
 
   zekaMesajiGoster("user", soru);
-  zekaGecmisi.push({ role: "user", content: soru });
 
+  /*
+   * Kullanıcının yeni mesajını konuşma geçmişine ekle.
+   */
+  zekaGecmisi.push({
+    role: "user",
+    content: soru
+  });
+
+  /*
+   * Son mesajları sunucunun beklediği biçime dönüştür.
+   * Worker, geçmişi "history" alanından okuyor.
+   */
   const gonderilecekMesajlar = zekaGecmisi
     .slice(-13)
     .map(function(mesaj) {
@@ -511,40 +598,61 @@ zekaForm.addEventListener("submit", async function(event) {
   zekaSoru.value = "";
 
   try {
-    const response = await fetch(
-      "https://wispy-shape-04a2.cevirmeyase.workers.dev/ask",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          /* DÜZELTME: Sunucunun beklediği mesaj alanı eklendi. */
-          message: soru,
-          topic: soru,
-          messages: gonderilecekMesajlar
-        })
-      }
-    );
+    const response = await fetch(BB_ZEKA_ENDPOINT, {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      /*
+       * ÖNEMLİ DÜZELTME:
+       * Worker "message" ve "history" alanlarını bekliyor.
+       * Eski "topic" ve "messages" alanları kaldırıldı.
+       */
+      body: JSON.stringify({
+        message: soru,
+        history: gonderilecekMesajlar
+      })
+    });
 
     let data;
 
     try {
       data = await response.json();
     } catch {
-      throw new Error("Sunucudan okunabilir bir yanıt alınamadı.");
+      throw new Error(
+        "Sunucudan okunabilir bir yanıt alınamadı."
+      );
     }
 
     if (!response.ok) {
-      throw new Error(data.error || "Asistan şu anda yanıt veremiyor.");
+      throw new Error(
+        data.error ||
+        "Asistan şu anda yanıt veremiyor. Lütfen tekrar deneyin."
+      );
     }
 
-    let cevap = data.answer || "Metin yanıtı alınamadı.";
+    if (typeof data.answer !== "string" || !data.answer.trim()) {
+      throw new Error(
+        "Sunucu yanıt verdi ancak cevap metni bulunamadı."
+      );
+    }
+
+    let cevap = data.answer;
 
     const kaynakListesi = Array.isArray(data.webSources)
       ? data.webSources
-      : (Array.isArray(data.sources) ? data.sources : []);
+      : (
+          Array.isArray(data.sources)
+            ? data.sources
+            : []
+        );
 
+    /*
+     * Kaynaklar ayrı listede gösteriliyorsa,
+     * cevabın sonundaki yinelenen kaynak bölümünü kaldır.
+     */
     if (kaynakListesi.length > 0) {
       cevap = cevap.replace(
         /\n{0,2}#{1,3}\s*Web kaynakları\s*\n[\s\S]*$/i,
@@ -552,6 +660,9 @@ zekaForm.addEventListener("submit", async function(event) {
       ).trim();
     }
 
+    /*
+     * Başarılı yanıtı konuşma geçmişine kaydet.
+     */
     zekaGecmisi.push({
       role: "assistant",
       content: cevap
@@ -560,16 +671,30 @@ zekaForm.addEventListener("submit", async function(event) {
     zekaMesajiGoster("assistant", cevap);
     zekaKaynaklariGoster(kaynakListesi);
 
-    zekaDurum.textContent = data.sourceNote ||
+    zekaDurum.textContent =
+      data.sourceNote ||
       "Yanıt hazır. Bilgileri ve varsa kaynakları kontrol edin.";
 
   } catch (error) {
     console.error("BB Zekâ bağlantı hatası:", error);
 
-    /* Başarısız kullanıcı mesajını geçmişten çıkar. */
-    zekaGecmisi.pop();
+    /*
+     * Başarısız mesajı geçmişten çıkar.
+     * Böylece sonraki istekte hatalı bir konuşma
+     * geçmişi gönderilmez.
+     */
+    const sonMesaj = zekaGecmisi[zekaGecmisi.length - 1];
 
-    zekaDurum.textContent = error.message ||
+    if (
+      sonMesaj &&
+      sonMesaj.role === "user" &&
+      sonMesaj.content === soru
+    ) {
+      zekaGecmisi.pop();
+    }
+
+    zekaDurum.textContent =
+      error.message ||
       "BB Zekâ bağlantı kuramadı. Biraz sonra tekrar deneyin.";
 
     zekaMesajiGoster(
@@ -585,7 +710,11 @@ zekaForm.addEventListener("submit", async function(event) {
   }
 });
 
-/* Mevcut geçici sohbeti temizle */
+
+/* =========================================
+   4. GEÇİCİ SOHBETİ TEMİZLE
+========================================= */
+
 zekaTemizle.addEventListener("click", function() {
   if (istekSuruyor) {
     zekaDurum.textContent =
@@ -595,20 +724,22 @@ zekaTemizle.addEventListener("click", function() {
 
   zekaGecmisi = [];
   zekaSohbet.replaceChildren();
+  zekaKaynaklar.replaceChildren();
 
   const mesaj = document.createElement("p");
+
   mesaj.id = "zekaBosMesaj";
   mesaj.textContent =
     "Merhaba! Ben BB Zekâ. Sana nasıl yardımcı olabilirim?";
 
   zekaSohbet.appendChild(mesaj);
-  zekaKaynaklar.replaceChildren();
 
   zekaDurum.textContent =
     "Sohbet temizlendi. Yeni bir soruyla başlayabilirsin.";
 
   zekaSoru.value = "";
 });
+
 </script>
 </body>
 </html>
