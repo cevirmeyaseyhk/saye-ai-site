@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="tr">
 <head>
@@ -48,6 +47,7 @@ footer{padding:25px;text-align:center;color:#526b59}
 </style>
 </head>
 <body>
+
 <header>
 <strong>BB Akademi Bilim Ve Araştırma Kulübü 2026/2027</strong>
 <nav>
@@ -164,12 +164,15 @@ researchForm.addEventListener("submit", async function(event) {
   results.replaceChildren();
 
   try {
-    const apiUrl = "https://api.crossref.org/works?query.bibliographic=" +
+    const apiUrl =
+      "https://api.crossref.org/works?query.bibliographic=" +
       encodeURIComponent(query) +
       "&filter=type:journal-article&rows=8&select=DOI,title,author,published-print,published-online,container-title,URL,type";
 
     const response = await fetch(apiUrl);
-    if (!response.ok) throw new Error("Arama servisi yanıt vermedi.");
+    if (!response.ok) {
+      throw new Error("Arama servisi yanıt vermedi.");
+    }
 
     const data = await response.json();
     const papers = data.message.items || [];
@@ -183,16 +186,23 @@ researchForm.addEventListener("submit", async function(event) {
 
     for (const paper of papers) {
       const title = paper.title?.[0] || "Başlık bilgisi yok";
-      const authors = (paper.author || []).slice(0, 5)
-        .map(author => [author.given, author.family].filter(Boolean).join(" "))
-        .filter(Boolean).join(", ");
 
-      const dateParts = paper["published-print"]?.["date-parts"]?.[0] ||
+      const authors = (paper.author || [])
+        .slice(0, 5)
+        .map(author =>
+          [author.given, author.family].filter(Boolean).join(" ")
+        )
+        .filter(Boolean)
+        .join(", ");
+
+      const dateParts =
+        paper["published-print"]?.["date-parts"]?.[0] ||
         paper["published-online"]?.["date-parts"]?.[0];
 
       const year = dateParts?.[0] || "Yıl belirtilmemiş";
       const doi = paper.DOI;
-      const journal = paper["container-title"]?.[0] || "Dergi belirtilmemiş";
+      const journal =
+        paper["container-title"]?.[0] || "Dergi belirtilmemiş";
 
       const article = document.createElement("article");
       article.className = "research-result";
@@ -202,8 +212,11 @@ researchForm.addEventListener("submit", async function(event) {
       article.appendChild(heading);
 
       const details = document.createElement("p");
-      details.textContent = "Yazarlar: " + (authors || "Belirtilmemiş") +
-        " | Yıl: " + year + " | Dergi: " + journal;
+      details.textContent =
+        "Yazarlar: " + (authors || "Belirtilmemiş") +
+        " | Yıl: " + year +
+        " | Dergi: " + journal;
+
       article.appendChild(details);
 
       const link = document.createElement("a");
@@ -229,9 +242,11 @@ researchForm.addEventListener("submit", async function(event) {
       count++;
     }
 
-    status.textContent = count + " yayın kaydı bulundu. Yayın bilgilerini ve özgün makaleleri kontrol edin.";
+    status.textContent =
+      count + " yayın kaydı bulundu. Yayın bilgilerini ve özgün makaleleri kontrol edin.";
   } catch (error) {
-    status.textContent = "Arama yapılamadı. İnternet bağlantısını veya arama servisinin durumunu kontrol edip tekrar deneyin.";
+    status.textContent =
+      "Arama yapılamadı. İnternet bağlantısını veya arama servisinin durumunu kontrol edip tekrar deneyin.";
   }
 });
 
@@ -247,10 +262,7 @@ const zekaTemizle = document.getElementById("zekaTemizle");
 let zekaGecmisi = [];
 let istekSuruyor = false;
 
-/*
- * Güvenli, sınırlı Markdown gösterimi.
- * HTML doğrudan çalıştırılmaz; içerik DOM düğümleriyle oluşturulur.
- */
+/* Güvenli, sınırlı Markdown gösterimi. */
 function zekaSatiriniIsle(parent, line) {
   const baslik = line.match(/^(#{1,3})\s+(.+)$/);
 
@@ -262,12 +274,15 @@ function zekaSatiriniIsle(parent, line) {
   }
 
   const madde = line.match(/^\s*[-*]\s+(.+)$/);
+
   if (madde) {
     let liste = parent.lastElementChild;
+
     if (!liste || liste.tagName !== "UL") {
       liste = document.createElement("ul");
       parent.appendChild(liste);
     }
+
     const li = document.createElement("li");
     zekaSatirIci(li, madde[1]);
     liste.appendChild(li);
@@ -275,12 +290,15 @@ function zekaSatiriniIsle(parent, line) {
   }
 
   const numarali = line.match(/^\s*\d+[.)]\s+(.+)$/);
+
   if (numarali) {
     let liste = parent.lastElementChild;
+
     if (!liste || liste.tagName !== "OL") {
       liste = document.createElement("ol");
       parent.appendChild(liste);
     }
+
     const li = document.createElement("li");
     zekaSatirIci(li, numarali[1]);
     liste.appendChild(li);
@@ -295,10 +313,6 @@ function zekaSatiriniIsle(parent, line) {
 }
 
 function zekaSatirIci(parent, text) {
-  /*
-   * Bazı modeller bağlantıları hatalı Markdown biçiminde döndürebilir.
-   * Yaygın biçim hatalarını düzeltmeye çalış.
-   */
   text = text
     .replace(/\\\(/g, "(")
     .replace(/\\\)/g, ")")
@@ -326,14 +340,17 @@ function zekaSatirIci(parent, text) {
       const strong = document.createElement("strong");
       strong.textContent = token.slice(2, -2);
       parent.appendChild(strong);
+
     } else if (token.startsWith("*") && token.endsWith("*")) {
       const em = document.createElement("em");
       em.textContent = token.slice(1, -1);
       parent.appendChild(em);
+
     } else if (token.startsWith("`") && token.endsWith("`")) {
       const code = document.createElement("code");
       code.textContent = token.slice(1, -1);
       parent.appendChild(code);
+
     } else {
       let label;
       let href;
@@ -348,6 +365,7 @@ function zekaSatirIci(parent, text) {
 
       try {
         const url = new URL(href);
+
         if (url.protocol === "https:" || url.protocol === "http:") {
           const link = document.createElement("a");
           link.href = url.href;
@@ -357,6 +375,7 @@ function zekaSatirIci(parent, text) {
           parent.appendChild(link);
 
           const kalan = token.slice(href.length);
+
           if (!match[2] && kalan) {
             parent.appendChild(document.createTextNode(kalan));
           }
@@ -380,6 +399,7 @@ function zekaMarkdownGoster(container, text) {
   container.replaceChildren();
 
   const lines = String(text || "").split(/\r?\n/);
+
   for (const line of lines) {
     zekaSatiriniIsle(container, line);
   }
@@ -387,6 +407,7 @@ function zekaMarkdownGoster(container, text) {
 
 function zekaMesajiGoster(rol, metin) {
   const kutu = document.createElement("div");
+
   kutu.className = "zeka-mesaj " +
     (rol === "user" ? "zeka-kullanici" : "zeka-asistan");
 
@@ -427,7 +448,10 @@ function zekaKaynaklariGoster(sources) {
       if (!source || !source.url) continue;
 
       const url = new URL(source.url);
-      if (url.protocol !== "https:" && url.protocol !== "http:") continue;
+
+      if (url.protocol !== "https:" && url.protocol !== "http:") {
+        continue;
+      }
 
       if (gorulenler.has(url.href)) continue;
       gorulenler.add(url.href);
@@ -454,6 +478,7 @@ function zekaKaynaklariGoster(sources) {
   }
 }
 
+/* BB Zekâ'ya mesaj gönderme */
 zekaForm.addEventListener("submit", async function(event) {
   event.preventDefault();
 
@@ -474,9 +499,14 @@ zekaForm.addEventListener("submit", async function(event) {
   zekaMesajiGoster("user", soru);
   zekaGecmisi.push({ role: "user", content: soru });
 
-  const gonderilecekMesajlar = zekaGecmisi.slice(-13).map(function(mesaj) {
-    return { role: mesaj.role, content: mesaj.content };
-  });
+  const gonderilecekMesajlar = zekaGecmisi
+    .slice(-13)
+    .map(function(mesaj) {
+      return {
+        role: mesaj.role,
+        content: mesaj.content
+      };
+    });
 
   zekaSoru.value = "";
 
@@ -485,8 +515,12 @@ zekaForm.addEventListener("submit", async function(event) {
       "https://wispy-shape-04a2.cevirmeyase.workers.dev/ask",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
+          /* DÜZELTME: Sunucunun beklediği mesaj alanı eklendi. */
+          message: soru,
           topic: soru,
           messages: gonderilecekMesajlar
         })
@@ -494,6 +528,7 @@ zekaForm.addEventListener("submit", async function(event) {
     );
 
     let data;
+
     try {
       data = await response.json();
     } catch {
@@ -506,11 +541,6 @@ zekaForm.addEventListener("submit", async function(event) {
 
     let cevap = data.answer || "Metin yanıtı alınamadı.";
 
-    /*
-     * Kaynaklar ayrı bir dizi olarak geldiyse, yanıt içindeki
-     * "Web kaynakları" bölümünü kaldırıp bağlantıları altta göster.
-     * Kaynak dizisi yoksa yanıttaki kaynak metnini koru.
-     */
     const kaynakListesi = Array.isArray(data.webSources)
       ? data.webSources
       : (Array.isArray(data.sources) ? data.sources : []);
@@ -522,9 +552,12 @@ zekaForm.addEventListener("submit", async function(event) {
       ).trim();
     }
 
-    zekaGecmisi.push({ role: "assistant", content: cevap });
-    zekaMesajiGoster("assistant", cevap);
+    zekaGecmisi.push({
+      role: "assistant",
+      content: cevap
+    });
 
+    zekaMesajiGoster("assistant", cevap);
     zekaKaynaklariGoster(kaynakListesi);
 
     zekaDurum.textContent = data.sourceNote ||
@@ -533,7 +566,7 @@ zekaForm.addEventListener("submit", async function(event) {
   } catch (error) {
     console.error("BB Zekâ bağlantı hatası:", error);
 
-    // Son kullanıcı mesajını geçmişten çıkar.
+    /* Başarısız kullanıcı mesajını geçmişten çıkar. */
     zekaGecmisi.pop();
 
     zekaDurum.textContent = error.message ||
@@ -543,6 +576,7 @@ zekaForm.addEventListener("submit", async function(event) {
       "assistant",
       "Üzgünüm, bu mesaj gönderilemedi. Lütfen yeniden deneyin."
     );
+
   } finally {
     istekSuruyor = false;
     zekaGonder.disabled = false;
@@ -554,7 +588,8 @@ zekaForm.addEventListener("submit", async function(event) {
 /* Mevcut geçici sohbeti temizle */
 zekaTemizle.addEventListener("click", function() {
   if (istekSuruyor) {
-    zekaDurum.textContent = "Yanıt hazırlanırken sohbet temizlenemez.";
+    zekaDurum.textContent =
+      "Yanıt hazırlanırken sohbet temizlenemez.";
     return;
   }
 
@@ -563,11 +598,15 @@ zekaTemizle.addEventListener("click", function() {
 
   const mesaj = document.createElement("p");
   mesaj.id = "zekaBosMesaj";
-  mesaj.textContent = "Merhaba! Ben BB Zekâ. Sana nasıl yardımcı olabilirim?";
-  zekaSohbet.appendChild(mesaj);
+  mesaj.textContent =
+    "Merhaba! Ben BB Zekâ. Sana nasıl yardımcı olabilirim?";
 
+  zekaSohbet.appendChild(mesaj);
   zekaKaynaklar.replaceChildren();
-  zekaDurum.textContent = "Sohbet temizlendi. Yeni bir soruyla başlayabilirsin.";
+
+  zekaDurum.textContent =
+    "Sohbet temizlendi. Yeni bir soruyla başlayabilirsin.";
+
   zekaSoru.value = "";
 });
 </script>
